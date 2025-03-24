@@ -105,5 +105,10 @@ export namespace IPyodideWorkerKernel {
       lockFileURL: string;
       packages: string[];
     };
+
+    /**
+     * The kernel id.
+     */
+    kernelId?: string;
   }
 }

@@ -121,6 +121,7 @@ export class PyodideKernel extends BaseKernel implements IKernel {
       mountDrive: options.mountDrive,
       loadPyodideOptions: options.loadPyodideOptions || {},
       browsingContextId: options.browsingContextId,
+      kernelId: this.id,
     };
   }
 
