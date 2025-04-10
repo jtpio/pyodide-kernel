@@ -36,6 +36,11 @@ export class PyodideRemoteKernel {
     await this.initPackageManager(options);
     await this.initKernel(options);
     await this.initGlobals(options);
+
+    this._logMessage({
+      type: 'initialized',
+      level: 'info',
+    });
     this._initializer?.resolve();
   }
 
@@ -58,11 +63,11 @@ export class PyodideRemoteKernel {
     });
 
     const log = (msg: string) => {
-      this._logMessage({ type: 'log', msg });
+      this._logMessage({ type: 'log', level: 'info', msg });
     };
 
     const err = (msg: string) => {
-      this._logMessage({ type: 'error', msg });
+      this._logMessage({ type: 'error', level: 'error', msg });
     };
 
     // Workaround for being able to get information about packages being loaded by Pyodide

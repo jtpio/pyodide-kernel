@@ -2,3 +2,99 @@
 | Copyright (c) Jupyter Development Team.
 | Distributed under the terms of the Modified BSD License.
 |----------------------------------------------------------------------------*/
+.status-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.status-indicator-icon-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.status-indicator-spinner,
+.status-indicator-success,
+.status-indicator-failure,
+.status-indicator svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Loading state */
+.status-indicator-spinner {
+  transform-origin: center;
+  animation: spin 1s linear infinite;
+  color: #3b82f6; /* blue-500 */
+}
+
+.status-indicator-spinner-track {
+  opacity: 0.25;
+}
+
+.status-indicator-spinner-path {
+  opacity: 0.75;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Success state */
+.status-indicator-success {
+  color: #22c55e; /* green-500 */
+}
+
+/* Error state */
+.status-indicator-error {
+  color: #ef4444; /* red-500 */
+}
+
+/* Busy state */
+.status-indicator-busy {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.status-indicator-busy-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #8b5cf6; /* purple-500 */
+  animation: pulse 1.4s infinite ease-in-out;
+}
+
+.status-indicator-busy-dot:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.status-indicator-busy-dot:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+.status-indicator .status-indicator-busy-dot {
+  width: 4px;
+  height: 4px;
+}
+
+@keyframes pulse {
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

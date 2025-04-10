@@ -153,8 +153,8 @@ export class PyodideKernel extends BaseKernel implements IKernel {
 
   private _processLogMessage(msg: any): void {
     const data = msg.msg as string;
-    const payload: ILogPayload = { type: 'text', level: 'info', data };
-    this._logger({ payload, kernelId: this.id });
+    const payload: ILogPayload = { type: 'text', level: msg.level, data };
+    this._logger({ payload, kernelId: this.id, type: msg.type });
   }
 
   /**
@@ -355,7 +355,11 @@ export class PyodideKernel extends BaseKernel implements IKernel {
   }
 
   private _contentsManager: Contents.IManager;
-  private _logger: (options: { payload: ILogPayload; kernelId: string }) => void;
+  private _logger: (options: {
+    payload: ILogPayload;
+    kernelId: string;
+    type?: string;
+  }) => void;
   private _contentsProcessor: DriveContentsProcessor | undefined;
   private _worker: Worker;
   private _remoteKernel:

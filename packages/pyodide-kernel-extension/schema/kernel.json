@@ -1,0 +1,10 @@
+{
+  "title": "Kernel Execution Settings",
+  "description": "Kernel Execution Settings",
+  "jupyter.lab.toolbars": {
+    "Notebook": [{ "name": "kernelLogs", "rank": 990 }]
+  },
+  "properties": {},
+  "additionalProperties": false,
+  "type": "object"
+}
