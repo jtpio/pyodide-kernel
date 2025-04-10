@@ -67,6 +67,7 @@
   "jupyterlab": {
     "extension": true,
     "outputDir": "../../jupyterlite_pyodide_kernel/labextension",
+    "schemaDir": "schema",
     "webpackConfig": "webpack.config.js",
     "sharedPackages": {
       "@jupyterlite/kernel": {
@@ -88,5 +89,6 @@
   },
   "piplite": {
     "wheelDir": "static/pypi"
-  }
+  },
+  "styleModule": "style/index.js"
 }

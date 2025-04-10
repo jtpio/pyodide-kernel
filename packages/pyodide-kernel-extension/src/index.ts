@@ -3,15 +3,19 @@
 
 import { JupyterFrontEnd, JupyterFrontEndPlugin } from '@jupyterlab/application';
 
+import { IToolbarWidgetRegistry } from '@jupyterlab/apputils';
+
 import { PageConfig, URLExt } from '@jupyterlab/coreutils';
 
 import { ILoggerRegistry, ILogPayload } from '@jupyterlab/logconsole';
 
-import { INotebookTracker } from '@jupyterlab/notebook';
+import { INotebookTracker, NotebookPanel } from '@jupyterlab/notebook';
 
 import { IServiceWorkerManager } from '@jupyterlite/server';
 
 import { IKernel, IKernelSpecs } from '@jupyterlite/kernel';
+
+import { StatusToolbarButton } from './status';
 
 import KERNEL_ICON_SVG_STR from '../style/img/pyodide.svg';
 
@@ -36,13 +40,19 @@ const kernel: JupyterFrontEndPlugin<void> = {
   id: PLUGIN_ID,
   autoStart: true,
   requires: [IKernelSpecs],
-  optional: [IServiceWorkerManager, ILoggerRegistry, INotebookTracker],
+  optional: [
+    IServiceWorkerManager,
+    ILoggerRegistry,
+    INotebookTracker,
+    IToolbarWidgetRegistry,
+  ],
   activate: (
     app: JupyterFrontEnd,
     kernelspecs: IKernelSpecs,
     serviceWorkerManager?: IServiceWorkerManager,
     loggerRegistry?: ILoggerRegistry,
     notebookTracker?: INotebookTracker,
+    toolbarRegistry?: IToolbarWidgetRegistry,
   ) => {
     const contentsManager = app.serviceManager.contents;
 
@@ -68,14 +78,18 @@ const kernel: JupyterFrontEndPlugin<void> = {
       }
     }
 
-    const logger = (options: { payload: ILogPayload; kernelId: string }) => {
+    const logger = (options: {
+      payload: ILogPayload;
+      kernelId: string;
+      type?: string;
+    }) => {
       if (!notebookTracker || !loggerRegistry) {
         // nothing to do in this case
         // TODO: simply log to the console?
         return;
       }
 
-      const { payload, kernelId } = options;
+      const { payload, kernelId, type } = options;
 
       const notebook = notebookTracker.find(
         (nb) => nb.sessionContext.session?.kernel?.id === kernelId,
@@ -86,11 +100,28 @@ const kernel: JupyterFrontEndPlugin<void> = {
         return;
       }
 
+      if (type === 'initialized') {
+        console.log('kernel initialized', payload);
+      }
+
       const logger = loggerRegistry.getLogger(notebook.sessionContext.path);
       // TODO set the logger level to info by default?
       logger.level = 'info';
       logger.log(payload);
     };
+
+    const toolbarFactory = (panel: NotebookPanel) => {
+      const toolbarButton = new StatusToolbarButton({ notebookPanel: panel });
+      return toolbarButton;
+    };
+
+    if (toolbarRegistry) {
+      toolbarRegistry.addFactory<NotebookPanel>(
+        'Notebook',
+        'kernelLogs',
+        toolbarFactory,
+      );
+    }
 
     kernelspecs.register({
       spec: {
@@ -128,6 +159,7 @@ const kernel: JupyterFrontEndPlugin<void> = {
         });
       },
     });
+
     void app.serviceManager.kernelspecs.refreshSpecs();
   },
 };
