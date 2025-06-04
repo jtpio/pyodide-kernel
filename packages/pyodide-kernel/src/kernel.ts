@@ -373,6 +373,21 @@ export class PyodideKernel extends BaseKernel implements IKernel {
   }
 
   /**
+   * Handle an `interrupt_request` message.
+   *
+   * @param content - The content of the request.
+   *
+   * @returns A promise that resolves with the response message.
+   */
+  async interruptRequest(
+    content: KernelMessage.IInterruptRequestMsg['content'],
+  ): Promise<KernelMessage.IInterruptReplyMsg['content']> {
+    await this.ready;
+    const result = await this._remoteKernel.interrupt(content, this.parent);
+    return result;
+  }
+
+  /**
    * Send an `input_reply` message.
    *
    * @param content - The content of the reply.

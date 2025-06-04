@@ -507,25 +507,17 @@ ${e.stack}`;
   }
 
   /**
-   * Send a input request to the front-end and block until the reply is received.
+   * Interrupt the execution of the kernel.
    *
-   * @param prompt the text to show at the prompt
-   * @param password Is the request for a password?
-   * @returns String value from the input reply message, or undefined if there is none.
+   * @param content The incoming message with the interrupt request.
    */
-  protected abstract sendInputRequest(
-    prompt: string,
-    password: boolean,
-  ): string | undefined;
+  async interrupt(content: any, parent: any) {
+    await this.setup(parent);
 
-  getpass(prompt: string): string | undefined {
-    prompt = typeof prompt === 'undefined' ? '' : prompt;
-    return this.sendInputRequest(prompt, true);
-  }
-
-  input(prompt: string): string | undefined {
-    prompt = typeof prompt === 'undefined' ? '' : prompt;
-    return this.sendInputRequest(prompt, false);
+    // Signal interruption to the Pyodide kernel
+    const res = this._kernel.interrupt();
+    const results = this.formatResult(res);
+    return results;
   }
 
   /**
@@ -547,6 +539,37 @@ ${e.stack}`;
       parentHeader: this.formatResult(this._kernel._parent_header)['header'],
     });
   }
+
+  /**
+   * Request input from the user.
+   *
+   * @param prompt The prompt to display to the user.
+   * @param password Whether this is a password input.
+   */
+  input(prompt: string = '', password: boolean = false): string | undefined {
+    return this.sendInputRequest(prompt, password);
+  }
+
+  /**
+   * Request password input from the user.
+   *
+   * @param prompt The prompt to display to the user.
+   */
+  getpass(prompt: string = 'Password: '): string | undefined {
+    return this.sendInputRequest(prompt, true);
+  }
+
+  /**
+   * Send an input request and receive input reply.
+   * This method should be implemented by subclasses.
+   *
+   * @param prompt The prompt to display to the user.
+   * @param password Whether this is a password input.
+   */
+  protected abstract sendInputRequest(
+    prompt: string,
+    password: boolean,
+  ): string | undefined;
 
   /**
    * Initialization options.

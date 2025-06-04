@@ -89,3 +89,4 @@ workerAPI.commOpen = worker.commOpen.bind(worker);
 workerAPI.commMsg = worker.commMsg.bind(worker);
 workerAPI.commClose = worker.commClose.bind(worker);
 workerAPI.inputReply = worker.inputReply.bind(worker);
+workerAPI.interrupt = worker.interrupt.bind(worker);
